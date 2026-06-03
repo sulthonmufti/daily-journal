@@ -36,22 +36,45 @@ daily-journal/
 │   ├── Dockerfile          # Docker configuration untuk frontend
 │   └── ...
 ├── server/                 # Aplikasi Backend (Node.js + Express.js)
+│   ├── src/                # Kode sumber backend
+│   │   ├── config/         # Konfigurasi app (db connection, dll)
+│   │   ├── controllers/    # Handler HTTP request (e.g., auth.ctrl.js)
+│   │   ├── models/         # Model/Skema database Mongoose (e.g., User.js)
+│   │   ├── routes/         # Router API endpoints (e.g., auth.routes.js)
+│   │   ├── services/       # Logika bisnis utama (e.g., AuthService.js)
+│   │   ├── app.js          # Inisialisasi Express & middlewares
+│   │   └── server.js       # Entry point utama aplikasi backend
 │   ├── Dockerfile          # Docker configuration untuk backend
-│   └── ...
+│   ├── test-api.js         # Script pengujian endpoint backend
+│   └── package.json
 ├── docker-compose.yml      # Konfigurasi orkestrasi container lokal
 └── .gitignore              # Konfigurasi pengecualian file git
 ```
 
+
 ### Yang Telah Dikerjakan (Implemented Features):
 
-- **Struktur Monorepo MERN**: Pemisahan direktori `client` dan `server`.
-- **Inisialisasi Frontend**: Client menggunakan React + Vite dengan linting ESLint yang telah terkonfigurasi.
-- **Inisialisasi Backend**: Server dengan dependensi dasar (`express`, `mongoose`, `dotenv`, `cors`).
-- **Containerization**:
-  - `client/Dockerfile` untuk development environment frontend.
-  - `server/Dockerfile` untuk development environment backend.
-  - [docker-compose.yml](file:///d:/VSCode/daily-journal/docker-compose.yml) untuk menjalankan database MongoDB, Backend Server, dan Frontend Client secara bersamaan dalam container terisolasi.
-- **Git Configuration**: Konfigurasi file [.gitignore](file:///d:/VSCode/daily-journal/.gitignore) root untuk mengabaikan dependencies (`node_modules`), file sensitif (`.env`), dan dokumen internal lainnya.
+*   **Struktur Monorepo MERN**: Pemisahan direktori `client` dan `server`.
+*   **Inisialisasi Frontend**: Client menggunakan React + Vite dengan linting ESLint yang telah terkonfigurasi.
+*   **Arsitektur & API Backend**:
+    *   Mengimplementasikan **Controller-Service-Route** pattern untuk kebersihan dan kemudahan pemeliharaan kode backend.
+    *   **Fitur Autentikasi**:
+        *   Registrasi Akun Baru (`POST /api/auth/register`)
+        *   Login Akun (`POST /api/auth/login`)
+        *   Logout Akun (`GET /api/auth/logout`)
+    *   **Database Modeling (Mongoose)**:
+        *   `User`: Struktur data user & akun.
+        *   `JournalEntry`: Struktur entri harian jurnal.
+        *   `MoodTag`: Pengelompokan & pelacakan status mood.
+        *   `EntryTag`: Tag custom untuk entri jurnal.
+        *   `EntryMedia`: Lampiran media gambar/dokumen untuk entri.
+    *   **Script Pengujian**: Menambahkan [test-api.js](file:///d:/VSCode/daily-journal/server/test-api.js) untuk pengujian lokal end-to-end API backend.
+*   **Containerization**:
+    *   `client/Dockerfile` untuk development environment frontend.
+    *   `server/Dockerfile` untuk development environment backend.
+    *   [docker-compose.yml](file:///d:/VSCode/daily-journal/docker-compose.yml) untuk menjalankan database MongoDB, Backend Server, dan Frontend Client secara bersamaan dalam container terisolasi.
+*   **Git Configuration**: Konfigurasi file [.gitignore](file:///d:/VSCode/daily-journal/.gitignore) root untuk mengabaikan dependencies (`node_modules`), file sensitif (`.env`), dan dokumen internal lainnya.
+
 
 ---
 
