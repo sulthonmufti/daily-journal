@@ -11,4 +11,7 @@ router.post("/login", authController.loginUser);
 // Rute logout: GET /api/auth/logout
 router.get("/logout", authController.logoutUser);
 
+// Rute forgot password: POST /api/auth/forgot-password
+router.post("/forgot-password", authController.forgotPasswordUser);
+
 module.exports = router;

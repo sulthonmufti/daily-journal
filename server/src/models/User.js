@@ -21,6 +21,8 @@ const userSchema = new mongoose.Schema(
       required: [true, "Password wajib diisi"],
       minlength: 6,
     },
+    resetPasswordToken: String,
+    resetPasswordExpire: Date,
   },
   {
     timestamps: true,

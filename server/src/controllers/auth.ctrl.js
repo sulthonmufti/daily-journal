@@ -40,4 +40,15 @@ const logoutUser = (req, res) => {
   });
 };
 
-module.exports = { registerUser, loginUser, logoutUser };
+const forgotPasswordUser = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const result = await AuthService.forgotPassword(email);
+
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(404).json({ success: false, message: error.message });
+  }
+};
+
+module.exports = { registerUser, loginUser, logoutUser, forgotPasswordUser };
