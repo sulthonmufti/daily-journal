@@ -8,7 +8,6 @@ const Login = () => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   
-  // Mengambil fungsi login dari Zustand store
   const login = useAuthStore((state) => state.login);
   const navigate = useNavigate();
 
@@ -26,11 +25,8 @@ const Login = () => {
 
       const data = await response.json();
 
-      if (!response.ok) {
-        throw new Error(data.message || 'Terjadi kesalahan saat login');
-      }
+      if (!response.ok) throw new Error(data.message || 'Terjadi kesalahan saat login');
 
-      // Menyimpan data pengguna dan token ke Zustand store
       login(data.data, data.token);
       navigate('/'); 
     } catch (err) {
@@ -41,38 +37,38 @@ const Login = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50">
-      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-xl shadow-md">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900">Selamat Datang</h1>
-          <p className="mt-2 text-sm text-gray-600">Masuk ke akun Daily Journal Anda</p>
+    <div className="flex flex-col items-center justify-center min-h-screen px-4 bg-white font-sans text-[#111111]">
+      <div className="w-full max-w-[360px]">
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl font-semibold tracking-tight">Welcome back</h1>
+          <p className="mt-2 text-sm text-[#6b7280]">Please enter your details to sign in.</p>
         </div>
 
         {error && (
-          <div className="p-3 text-sm text-red-700 bg-red-100 rounded-md">
+          <div className="p-3 mb-6 text-sm text-[#ef4444] bg-[#fef2f2] border border-[#fecaca] rounded-md">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Email</label>
+            <label className="block mb-1.5 text-sm font-medium text-[#374151]">Email</label>
             <input
               type="email"
               required
-              className="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full h-10 px-3 py-2 text-sm bg-white border border-[#e5e7eb] rounded-md focus:outline-none focus:border-[#111111] focus:ring-1 focus:ring-[#111111] transition-shadow placeholder-[#a1a1aa]"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="nama@email.com"
+              placeholder="name@example.com"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Password</label>
+            <label className="block mb-1.5 text-sm font-medium text-[#374151]">Password</label>
             <input
               type="password"
               required
-              className="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full h-10 px-3 py-2 text-sm bg-white border border-[#e5e7eb] rounded-md focus:outline-none focus:border-[#111111] focus:ring-1 focus:ring-[#111111] transition-shadow placeholder-[#a1a1aa]"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
@@ -82,16 +78,16 @@ const Login = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-blue-300 transition-colors"
+            className="w-full h-10 px-4 mt-2 text-sm font-semibold text-white transition-colors bg-[#111111] rounded-md hover:bg-[#242424] disabled:bg-[#e5e7eb] disabled:text-[#6b7280]"
           >
-            {isLoading ? 'Memproses...' : 'Masuk'}
+            {isLoading ? 'Signing in...' : 'Sign in'}
           </button>
         </form>
 
-        <p className="text-sm text-center text-gray-600">
-          Belum punya akun?{' '}
-          <Link to="/register" className="font-medium text-blue-600 hover:text-blue-500">
-            Daftar di sini
+        <p className="mt-6 text-sm text-center text-[#6b7280]">
+          Don't have an account?{' '}
+          <Link to="/register" className="font-medium text-[#111111] hover:underline">
+            Sign up
           </Link>
         </p>
       </div>

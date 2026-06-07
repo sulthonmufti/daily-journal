@@ -24,11 +24,8 @@ const Register = () => {
 
       const data = await response.json();
 
-      if (!response.ok) {
-        throw new Error(data.message || 'Terjadi kesalahan saat mendaftar');
-      }
+      if (!response.ok) throw new Error(data.message || 'Terjadi kesalahan saat mendaftar');
 
-      // Jika registrasi sukses, arahkan ke halaman login
       navigate('/login');
     } catch (err) {
       setError(err.message);
@@ -38,26 +35,26 @@ const Register = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50">
-      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-xl shadow-md">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900">Buat Akun</h1>
-          <p className="mt-2 text-sm text-gray-600">Mulai catat perjalanan jurnal Anda</p>
+    <div className="flex flex-col items-center justify-center min-h-screen px-4 bg-white font-sans text-[#111111]">
+      <div className="w-full max-w-[360px]">
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl font-semibold tracking-tight">Create an account</h1>
+          <p className="mt-2 text-sm text-[#6b7280]">Start documenting your journey today.</p>
         </div>
 
         {error && (
-          <div className="p-3 text-sm text-red-700 bg-red-100 rounded-md">
+          <div className="p-3 mb-6 text-sm text-[#ef4444] bg-[#fef2f2] border border-[#fecaca] rounded-md">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Username</label>
+            <label className="block mb-1.5 text-sm font-medium text-[#374151]">Username</label>
             <input
               type="text"
               required
-              className="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full h-10 px-3 py-2 text-sm bg-white border border-[#e5e7eb] rounded-md focus:outline-none focus:border-[#111111] focus:ring-1 focus:ring-[#111111] transition-shadow placeholder-[#a1a1aa]"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="johndoe"
@@ -65,43 +62,43 @@ const Register = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Email</label>
+            <label className="block mb-1.5 text-sm font-medium text-[#374151]">Email</label>
             <input
               type="email"
               required
-              className="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full h-10 px-3 py-2 text-sm bg-white border border-[#e5e7eb] rounded-md focus:outline-none focus:border-[#111111] focus:ring-1 focus:ring-[#111111] transition-shadow placeholder-[#a1a1aa]"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="nama@email.com"
+              placeholder="name@example.com"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Password</label>
+            <label className="block mb-1.5 text-sm font-medium text-[#374151]">Password</label>
             <input
               type="password"
               required
               minLength="6"
-              className="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full h-10 px-3 py-2 text-sm bg-white border border-[#e5e7eb] rounded-md focus:outline-none focus:border-[#111111] focus:ring-1 focus:ring-[#111111] transition-shadow placeholder-[#a1a1aa]"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Minimal 6 karakter"
+              placeholder="Minimum 6 characters"
             />
           </div>
 
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-blue-300 transition-colors"
+            className="w-full h-10 px-4 mt-2 text-sm font-semibold text-white transition-colors bg-[#111111] rounded-md hover:bg-[#242424] disabled:bg-[#e5e7eb] disabled:text-[#6b7280]"
           >
-            {isLoading ? 'Memproses...' : 'Daftar Sekarang'}
+            {isLoading ? 'Creating account...' : 'Sign up'}
           </button>
         </form>
 
-        <p className="text-sm text-center text-gray-600">
-          Sudah punya akun?{' '}
-          <Link to="/login" className="font-medium text-blue-600 hover:text-blue-500">
-            Masuk di sini
+        <p className="mt-6 text-sm text-center text-[#6b7280]">
+          Already have an account?{' '}
+          <Link to="/login" className="font-medium text-[#111111] hover:underline">
+            Sign in
           </Link>
         </p>
       </div>
