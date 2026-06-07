@@ -2,8 +2,12 @@ const JournalService = require("../services/JournalService");
 
 const getEntries = async (req, res) => {
   try {
-    const entries = await JournalService.getAllEntries(req.user._id); // req.user._id dapet dari middleware auth (protect)
-    res.status(200).json({ success: true, data: entries });
+    const result = await JournalService.getAllEntries(req.user._id, req.query); // req.user._id dapet dari middleware auth (protect)
+    res.status(200).json({
+      success: true,
+      data: result.entries,
+      pagination: result.pagination,
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -34,12 +38,10 @@ const updateEntry = async (req, res) => {
 const deleteEntry = async (req, res) => {
   try {
     await JournalService.deleteEntry(req.user._id, req.params.id);
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "Jurnal berhasil dihapus secara permanen",
-      });
+    res.status(200).json({
+      success: true,
+      message: "Jurnal berhasil dihapus secara permanen",
+    });
   } catch (error) {
     res.status(404).json({ success: false, message: error.message });
   }
