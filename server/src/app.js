@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
-app.use("/api/journal", journalRoutes);
+app.use("/api/entries", journalRoutes);
 
 app.get("/", (req, res) => {
   res.status(200).json({ message: "API Daily Journal berjalan dengan baik!" });

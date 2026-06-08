@@ -8,19 +8,21 @@ const {
 } = require("../controllers/journal.ctrl");
 const { protect } = require("../middleware/auth.middleware");
 const validate = require("../middleware/validate");
-const { createEntrySchema } = require("../validators/entry.schema");
+const {
+  createEntrySchema,
+  updateEntrySchema,
+} = require("../validators/entry.schema");
 
-// Semua rute jurnal di bawah wajib pake token JWT
 router.use(protect);
 
 router
   .route("/")
-  .get(getEntries) //ambil data, gak pake Zod
-  .post(validate(createEntrySchema), createEntry); // Zod dicegat sebelum masuk createEntry
+  .get(getEntries)
+  .post(validate(createEntrySchema), createEntry);
 
 router
   .route("/:id")
-  .put(validate(createEntrySchema), updateEntry)
+  .put(validate(updateEntrySchema), updateEntry)
   .delete(deleteEntry);
 
 module.exports = router;
