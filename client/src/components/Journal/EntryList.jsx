@@ -39,7 +39,7 @@ const EntryList = () => {
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['entries'],
     queryFn: async () => {
-      const response = await fetch('http://localhost:5000/api/entries', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/entries`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

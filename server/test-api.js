@@ -5,7 +5,7 @@ async function runTest() {
     //test fitur register
     console.log("--- 1. UJI COBA REGISTER ---");
     const registerResponse = await fetch(
-      "http://localhost:5000/api/auth/register",
+      `${process.env.VITE_API_URL}/api/auth/register`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -21,14 +21,17 @@ async function runTest() {
 
     //test fitur login
     console.log("--- 2. UJI COBA LOGIN ---");
-    const loginResponse = await fetch("http://localhost:5000/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: "sulthon@test.com",
-        password: "rahasia-super",
-      }),
-    });
+    const loginResponse = await fetch(
+      `${process.env.VITE_API_URL}/auth/login`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: "sulthon@test.com",
+          password: "rahasia-super",
+        }),
+      },
+    );
     const loginData = await loginResponse.json();
     console.log("Hasil Login:", loginData);
 

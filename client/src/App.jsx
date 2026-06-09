@@ -7,6 +7,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import EntryEditor from './pages/EntryEditor';
 import EntryList from './components/Journal/EntryList';
+import Entries from './pages/Entries';
 
 // Setup QueryClient buat optimasi data fetching
 const queryClient = new QueryClient({
@@ -55,6 +56,7 @@ function App() {
         <Routes>
           <Route path="/" element={user ? <Dashboard /> : <Navigate to="/login" />} />
           <Route path="/editor" element={user ? <EntryEditor /> : <Navigate to="/login" />} />
+          <Route path="/entries" element={user ? <Entries /> : <Navigate to="/login" />} />
           <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
           <Route path="/register" element={!user ? <Register /> : <Navigate to="/" />} />
         </Routes>
