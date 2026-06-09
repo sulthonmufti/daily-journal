@@ -2,7 +2,7 @@ async function testForgotPassword() {
   console.log("⏳ Mengirim permintaan lupa password...\n");
   try {
     const response = await fetch(
-      "http://localhost:5000/api/auth/forgot-password",
+      `${process.env.VITE_API_URL}/auth/forgot-password`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

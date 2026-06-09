@@ -1,10 +1,24 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import useAuthStore from './store/useAuthStore';
 import MainLayout from './components/Layout/MainLayout';
 
 import Login from './pages/Login';
 import Register from './pages/Register';
-import EntryEditor from './pages/EntryEditor'; 
+import EntryEditor from './pages/EntryEditor';
+import EntryList from './components/Journal/EntryList';
+import Entries from './pages/Entries';
+
+// Setup QueryClient buat optimasi data fetching
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+});
+
 const Dashboard = () => (
   <MainLayout>
     {/* Menggunakan flex-row agar judul di kiri dan tombol di kanan */}
@@ -26,11 +40,9 @@ const Dashboard = () => (
       </Link>
     </div>
 
-    <div className="bg-[#f5f5f5] p-8 rounded-xl border border-[#e5e7eb]">
-      <h2 className="text-lg font-semibold text-[#111111]">Your Space</h2>
-      <p className="mt-2 text-[#374151]">
-        Fitur grafik akan segera diimplementasikan di sini.
-      </p>
+    {/* Bagian Daftar Entri Jurnal */}
+    <div>
+      <EntryList />
     </div>
   </MainLayout>
 );
@@ -39,14 +51,17 @@ function App() {
   const { user } = useAuthStore();
 
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={user ? <Dashboard /> : <Navigate to="/login" />} />
-        <Route path="/editor" element={user ? <EntryEditor /> : <Navigate to="/login" />} />
-        <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
-        <Route path="/register" element={!user ? <Register /> : <Navigate to="/" />} />
-      </Routes>
-    </Router>
+    <QueryClientProvider client={queryClient}>
+      <Router>
+        <Routes>
+          <Route path="/" element={user ? <Dashboard /> : <Navigate to="/login" />} />
+          <Route path="/editor" element={user ? <EntryEditor /> : <Navigate to="/login" />} />
+          <Route path="/entries" element={user ? <Entries /> : <Navigate to="/login" />} />
+          <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
+          <Route path="/register" element={!user ? <Register /> : <Navigate to="/" />} />
+        </Routes>
+      </Router>
+    </QueryClientProvider>
   );
 }
 
