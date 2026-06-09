@@ -30,7 +30,7 @@ const MoodPicker = ({ selectedMood, onMoodSelect }) => {
       <label className="block text-sm font-medium text-[#374151]">
         Bagaimana perasaan Anda hari ini?
       </label>
-      <div className="flex flex-wrap gap-2.5">
+      <div className="flex flex-wrap gap-2 md:gap-2.5">
         {moods.map((mood) => {
           const isSelected = selectedMood?.label === mood.label;
           const IconComponent = mood.icon;
@@ -45,12 +45,14 @@ const MoodPicker = ({ selectedMood, onMoodSelect }) => {
                 backgroundColor: isSelected ? `${mood.color}15` : '#ffffff',
                 color: isSelected ? mood.color : '#6b7280'
               }}
-              className={`flex items-center px-4 py-2 space-x-2 text-sm transition-all duration-200 rounded-full border ${
-                !isSelected && 'hover:border-[#d1d5db] hover:text-[#374151] hover:bg-gray-50'
+              className={`flex items-center px-3 py-1.5 md:px-4 md:py-2 space-x-1.5 md:space-x-2 text-xs md:text-sm transition-all duration-200 rounded-full border cursor-pointer hover:-translate-y-0.5 hover:shadow-sm ${
+                !isSelected 
+                  ? 'hover:border-[#d1d5db] hover:text-[#374151] hover:bg-gray-50' 
+                  : 'hover:brightness-95'
               }`}
             >
               <span 
-                className="w-2.5 h-2.5 rounded-full" 
+                className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full" 
                 style={{ backgroundColor: mood.color }}
               />
               
