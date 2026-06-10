@@ -1,7 +1,9 @@
-import { useQuery } from '@tanstack/react-query';
-import { 
-  CloudRain, Angry, Frown, Annoyed, Moon, 
-  Meh, Coffee, Smile, Zap, Sparkles, 
+import { useEffect } from 'react';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInView } from 'react-intersection-observer';
+import {
+  CloudRain, Angry, Frown, Annoyed, Moon,
+  Meh, Coffee, Smile, Zap, Sparkles,
   Lock, Globe, Calendar, FileText
 } from 'lucide-react';
 import useAuthStore from '../../store/useAuthStore';
@@ -33,21 +35,50 @@ const formatDate = (dateString) => {
   return new Date(dateString).toLocaleDateString('id-ID', options);
 };
 
-const EntryList = () => {
+const EntryList = ({ searchQuery, selectedMood }) => {
   const { token } = useAuthStore();
+  const { ref, inView } = useInView();
 
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['entries'],
-    queryFn: async () => {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/entries`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      if (!response.ok) throw new Error('Gagal mengambil data jurnal');
-      return response.json();
+  const fetchEntries = async ({ pageParam = 1 }) => {
+    const params = new URLSearchParams({
+      page: pageParam,
+      limit: 6,
+    });
+    
+    if (searchQuery) params.append('search', searchQuery);
+    if (selectedMood) params.append('mood', selectedMood);
+
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/entries?${params.toString()}`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    
+    if (!response.ok) throw new Error('Gagal mengambil data jurnal');
+    return response.json();
+  };
+
+  // Menggunakan useInfiniteQuery gantiin useQuery
+  const {
+    data,
+    isLoading,
+    isError,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  } = useInfiniteQuery({
+    queryKey: ['entries', searchQuery, selectedMood],
+    queryFn: fetchEntries,
+    getNextPageParam: (lastPage) => {
+      const { currentPage, totalPages } = lastPage.pagination;
+      return currentPage < totalPages ? currentPage + 1 : undefined;
     }
   });
+
+  useEffect(() => {
+    if (inView && hasNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, fetchNextPage]);
 
   if (isLoading) {
     return (
@@ -66,70 +97,82 @@ const EntryList = () => {
     );
   }
 
-  const entries = data?.data || [];
+  const entries = data?.pages.flatMap(page => page.data) || [];
 
   if (entries.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center border-2 border-dashed border-[#e5e7eb] rounded-xl bg-gray-50">
         <FileText size={48} className="text-[#d1d5db] mb-4" />
-        <h3 className="text-lg font-semibold text-[#111111]">Belum ada catatan</h3>
+        <h3 className="text-lg font-semibold text-[#111111]">Tidak ada catatan</h3>
         <p className="mt-1 text-sm text-[#6b7280] max-w-sm">
-          Ruang ini masih kosong. Mulailah menulis jurnal pertama Anda dan rekam jejak perjalanan emosi Anda.
+          {searchQuery || selectedMood 
+            ? 'Tidak ada jurnal yang cocok dengan filter atau pencarian Anda.' 
+            : 'Mulai tulis jurnal pertama Anda dan rekam jejak emosi Anda.'}
         </p>
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {entries.map((entry) => {
-        const moodConfig = getMoodConfig(entry.mood);
-        const MoodIcon = moodConfig.icon;
-        const snippet = stripHtml(entry.contentHTML || entry.contentMarkdown);
+    <div className="space-y-6">
+      {/* Grid Kartu Jurnal */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {entries.map((entry) => {
+          const moodConfig = getMoodConfig(entry.mood);
+          const MoodIcon = moodConfig.icon;
+          const snippet = stripHtml(entry.contentHTML || entry.contentMarkdown);
 
-        return (
-          <div 
-            key={entry._id} 
-            className="flex flex-col p-5 space-y-4 transition-all duration-200 bg-white border border-[#e5e7eb] rounded-xl cursor-pointer hover:shadow-md hover:-translate-y-1 hover:border-[#d1d5db]"
-          >
-            {/* Header Card: Judul & Tanggal */}
-            <div>
-              <div className="flex items-start justify-between">
-                <h3 className="text-lg font-semibold tracking-tight text-[#111111] line-clamp-1">
-                  {entry.title}
-                </h3>
-                {entry.isPrivate ? (
-                  <Lock size={16} className="text-[#9ca3af] shrink-0 ml-2" />
-                ) : (
-                  <Globe size={16} className="text-[#9ca3af] shrink-0 ml-2" />
-                )}
+          return (
+            <div 
+              key={entry._id} 
+              className="flex flex-col p-5 space-y-4 transition-all duration-200 bg-white border border-[#e5e7eb] rounded-xl cursor-pointer hover:shadow-md hover:-translate-y-1 hover:border-[#d1d5db]"
+            >
+              <div>
+                <div className="flex items-start justify-between">
+                  <h3 className="text-lg font-semibold tracking-tight text-[#111111] line-clamp-1">
+                    {entry.title}
+                  </h3>
+                  {entry.isPrivate ? (
+                    <Lock size={16} className="text-[#9ca3af] shrink-0 ml-2" />
+                  ) : (
+                    <Globe size={16} className="text-[#9ca3af] shrink-0 ml-2" />
+                  )}
+                </div>
+                <div className="flex items-center mt-1 text-xs text-[#6b7280]">
+                  <Calendar size={12} className="mr-1.5" />
+                  {formatDate(entry.entryDate)}
+                </div>
               </div>
-              <div className="flex items-center mt-1 text-xs text-[#6b7280]">
-                <Calendar size={12} className="mr-1.5" />
-                {formatDate(entry.entryDate)}
+
+              <div className="flex-1">
+                <p className="text-sm text-[#374151] line-clamp-3 leading-relaxed">
+                  {snippet}
+                </p>
+              </div>
+
+              <div className="pt-4 mt-auto border-t border-[#f3f4f6]">
+                <div 
+                  className="inline-flex items-center px-2.5 py-1 space-x-1.5 text-xs font-medium rounded-md"
+                  style={{ backgroundColor: `${moodConfig.color}15`, color: moodConfig.color }}
+                >
+                  <MoodIcon size={14} />
+                  <span>{entry.mood}</span>
+                </div>
               </div>
             </div>
+          );
+        })}
+      </div>
 
-            {/* Body Card: Snippet Teks */}
-            <div className="flex-1">
-              <p className="text-sm text-[#374151] line-clamp-3 leading-relaxed">
-                {snippet}
-              </p>
-            </div>
-
-            {/* Footer Card: Mood Badge */}
-            <div className="pt-4 mt-auto border-t border-[#f3f4f6]">
-              <div 
-                className="inline-flex items-center px-2.5 py-1 space-x-1.5 text-xs font-medium rounded-md"
-                style={{ backgroundColor: `${moodConfig.color}15`, color: moodConfig.color }}
-              >
-                <MoodIcon size={14} />
-                <span>{entry.mood}</span>
-              </div>
-            </div>
+      {/* Elemen Observer untuk Trigger Infinite Scroll */}
+      <div ref={ref} className="flex justify-center py-6">
+        {isFetchingNextPage && (
+          <div className="flex items-center space-x-2 text-sm text-[#6b7280]">
+            <div className="w-5 h-5 border-2 border-[#6b7280] border-t-transparent rounded-full animate-spin"></div>
+            <span>Memuat lebih banyak...</span>
           </div>
-        );
-      })}
+        )}
+      </div>
     </div>
   );
 };
