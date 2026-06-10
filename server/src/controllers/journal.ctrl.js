@@ -13,6 +13,23 @@ const getEntries = async (req, res) => {
   }
 };
 
+const getEntryById = async (req, res) => {
+  try {
+    const entry = await JournalService.getEntryById(
+      req.params.id,
+      req.user._id,
+    );
+    if (!entry) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Jurnal tidak ditemukan" });
+    }
+    res.status(200).json({ success: true, data: entry });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 const createEntry = async (req, res) => {
   try {
     const entry = await JournalService.createEntry(req.user._id, req.body);
@@ -47,4 +64,10 @@ const deleteEntry = async (req, res) => {
   }
 };
 
-module.exports = { getEntries, createEntry, updateEntry, deleteEntry };
+module.exports = {
+  getEntries,
+  getEntryById,
+  createEntry,
+  updateEntry,
+  deleteEntry,
+};

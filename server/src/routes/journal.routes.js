@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const {
   getEntries,
+  getEntryById,
   createEntry,
   updateEntry,
   deleteEntry,
@@ -22,6 +23,7 @@ router
 
 router
   .route("/:id")
+  .get(getEntryById)
   .put(validate(updateEntrySchema), updateEntry)
   .delete(deleteEntry);
 

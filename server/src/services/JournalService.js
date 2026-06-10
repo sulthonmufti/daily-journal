@@ -51,6 +51,16 @@ class JournalService {
     };
   }
 
+  //ambil satu entri berdasarkan ID (milik user yang login)
+  static async getEntryById(entryId, userId) {
+    const entry = await JournalEntry.findOne({
+      _id: entryId,
+      userId: userId,
+    });
+
+    return entry;
+  }
+
   //buat entri jurnal baru
   static async createEntry(userId, entryData) {
     const dateToSave = entryData.entryDate
@@ -75,6 +85,9 @@ class JournalService {
 
   // update entri jurnal
   static async updateEntry(userId, entryId, updateData) {
+    if (updateData.contentMarkdown !== undefined) {
+      updateData.contentHTML = updateData.contentMarkdown;
+    }
     const updatedEntry = await JournalEntry.findOneAndUpdate(
       { _id: entryId, userId: userId },
       updateData,
