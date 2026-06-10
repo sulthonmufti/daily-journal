@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useInView } from 'react-intersection-observer';
 import {
@@ -38,6 +39,7 @@ const formatDate = (dateString) => {
 const EntryList = ({ searchQuery, selectedMood }) => {
   const { token } = useAuthStore();
   const { ref, inView } = useInView();
+  const navigate = useNavigate();
 
   const fetchEntries = async ({ pageParam = 1 }) => {
     const params = new URLSearchParams({
@@ -125,6 +127,7 @@ const EntryList = ({ searchQuery, selectedMood }) => {
           return (
             <div 
               key={entry._id} 
+              onClick={() => navigate(`/entries/${entry._id}`)}
               className="flex flex-col p-5 space-y-4 transition-all duration-200 bg-white border border-[#e5e7eb] rounded-xl cursor-pointer hover:shadow-md hover:-translate-y-1 hover:border-[#d1d5db]"
             >
               <div>
