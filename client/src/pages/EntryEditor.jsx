@@ -37,6 +37,7 @@ const EntryEditor = () => {
   const [content, setContent] = useState('');
   const [moodObj, setMoodObj] = useState(null);
   const [isPrivate, setIsPrivate] = useState(true);
+  const [originalDate, setOriginalDate] = useState(null);
   
   const [isLoading, setIsLoading] = useState(false);
   const [isFetchingData, setIsFetchingData] = useState(false);
@@ -63,6 +64,7 @@ const EntryEditor = () => {
           setContent(result.data.contentHTML || result.data.contentMarkdown);
           setMoodObj(getMoodObject(result.data.mood));
           setIsPrivate(result.data.isPrivate);
+          setOriginalDate(result.data.entryDate);
           setDraftStatus('Mengedit jurnal tersimpan');
         } catch (err) {
           setError(err.message);
@@ -139,7 +141,7 @@ const EntryEditor = () => {
           mood: moodObj.label,
           moodScore: moodObj.score,
           isPrivate: isPrivate,
-          entryDate: new Date().toISOString()
+          entryDate: isEditMode && originalDate ? originalDate : new Date().toISOString()
         })
       });
 

@@ -1,17 +1,12 @@
+import { useQuery } from '@tanstack/react-query';
 import { 
-  CloudRain, 
-  Angry, 
-  Frown, 
-  Annoyed, 
-  Moon,
-  Meh, 
-  Coffee, 
-  Smile, 
-  Zap,
-  Sparkles 
+  CloudRain, Angry, Frown, Annoyed, Moon, 
+  Meh, Coffee, Smile, Zap, Sparkles 
 } from 'lucide-react';
+import useAuthStore from '../../store/useAuthStore';
 
-const moods = [
+// 1. Definisikan defaultMoods DI LUAR komponen agar bisa diakses oleh fungsi komponen
+const defaultMoods = [
   { label: 'Terpuruk', icon: CloudRain, color: '#1e293b', score: 1 },
   { label: 'Marah', icon: Angry, color: '#dc2626', score: 2 },
   { label: 'Sedih', icon: Frown, color: '#3b82f6', score: 3 },
@@ -25,15 +20,38 @@ const moods = [
 ];
 
 const MoodPicker = ({ selectedMood, onMoodSelect }) => {
+  const { token } = useAuthStore();
+
+  const { data } = useQuery({
+    queryKey: ['moods'],
+    queryFn: async () => {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/moods`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!response.ok) throw new Error('Gagal mengambil mood');
+      return response.json();
+    }
+  });
+
+  const customMoods = data?.data?.filter(mood => !mood.isDefault).map(mood => ({
+    label: mood.name,
+    emojiStr: mood.emoji,
+    color: mood.color,
+    score: 5
+  })) || [];
+
+  // Sekarang defaultMoods sudah terdefinisi di atas, jadi ini akan berjalan lancar
+  const allMoods = [...defaultMoods, ...customMoods];
+
   return (
     <div className="space-y-3">
       <label className="block text-sm font-medium text-[#374151]">
         Bagaimana perasaan Anda hari ini?
       </label>
       <div className="flex flex-wrap gap-2 md:gap-2.5">
-        {moods.map((mood) => {
+        {allMoods.map((mood) => {
           const isSelected = selectedMood?.label === mood.label;
-          const IconComponent = mood.icon;
+          const IconComponent = mood.icon; 
 
           return (
             <button
@@ -52,16 +70,25 @@ const MoodPicker = ({ selectedMood, onMoodSelect }) => {
               }`}
             >
               <span 
-                className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full" 
+                className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full shrink-0" 
                 style={{ backgroundColor: mood.color }}
               />
               
-              <IconComponent 
-                size={16} 
-                strokeWidth={isSelected ? 2.5 : 2} 
-                className="transition-transform duration-200"
-                style={{ transform: isSelected ? 'scale(1.1)' : 'scale(1)' }}
-              />
+              {IconComponent ? (
+                <IconComponent 
+                  size={16} 
+                  strokeWidth={isSelected ? 2.5 : 2} 
+                  className="transition-transform duration-200"
+                  style={{ transform: isSelected ? 'scale(1.1)' : 'scale(1)' }}
+                />
+              ) : (
+                <span 
+                  className="text-sm transition-transform duration-200"
+                  style={{ transform: isSelected ? 'scale(1.1)' : 'scale(1)' }}
+                >
+                  {mood.emojiStr}
+                </span>
+              )}
               
               <span className={`font-medium ${isSelected ? 'font-semibold' : ''}`}>
                 {mood.label}
