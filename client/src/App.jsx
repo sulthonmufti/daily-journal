@@ -10,6 +10,7 @@ import EntryList from './components/Journal/EntryList';
 import Entries from './pages/Entries';
 import EntryDetail from './pages/EntryDetail';
 import Settings from './pages/Settings';
+import MoodAnalytics from './components/Analytics/MoodAnalytics';
 
 // Setup QueryClient buat optimasi data fetching
 const queryClient = new QueryClient({
@@ -41,6 +42,8 @@ const Dashboard = () => (
         Tulis Jurnal
       </Link>
     </div>
+
+    <MoodAnalytics />
 
     {/* Bagian Daftar Entri Jurnal */}
     <div>
