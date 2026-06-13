@@ -4,6 +4,7 @@ const cors = require("cors");
 const authRoutes = require("./routes/auth.routes");
 const journalRoutes = require("./routes/journal.routes");
 const moodRoutes = require("./routes/mood.routes");
+const analyticsRoutes = require("./routes/analytics.routes");
 
 const app = express();
 
@@ -13,6 +14,8 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/entries", journalRoutes);
 app.use("/api/moods", moodRoutes);
+app.use("/api/analytics", analyticsRoutes);
+
 app.get("/", (req, res) => {
   res.status(200).json({ message: "API Daily Journal berjalan dengan baik!" });
 });
